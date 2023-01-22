@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_intervention_slip.xml"
+    app:startDestination="@id/fragmentInterventionSlipList">
+
+
+    <fragment
+        android:id="@+id/fragmentInterventionSlipList"
+        android:name="com.athand.intervention.ui.intervention_report.fragments.FragmentInterventionReportList"
+        android:label="FragmentInterventionSlipList"
+        tools:layout="@layout/fragment_intervention_report_list"/>
+</navigation>

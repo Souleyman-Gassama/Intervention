@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!--    layout_view_top-->
+            <include layout="@layout/layout_view_top" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/layout_personal_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="40dp"
+                app:cardBackgroundColor="@color/gray"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="3dp">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="1dp"
+                    android:background="@color/white"
+                    app:cardCornerRadius="15dp"
+                    app:cardElevation="0dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="16dp">
+
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginBottom="16dp"
+                            >
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:text="@string/Profil_"
+                            android:textColor="@color/blueDark"
+                            android:textSize="17sp"
+                            android:textStyle="bold|italic" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/button_Edit_Or_Save_fragment_personal_info"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:layout_marginEnd="16dp"
+                            android:backgroundTint="@color/white"
+                            android:text="@string/Edit"
+                            android:textColor="@color/blue"
+                            app:icon="@drawable/ic_edit"
+                            app:iconTint="@color/blue"
+                            app:strokeColor="@color/blue"
+                            app:strokeWidth="1dp" />
+                        </FrameLayout>
+
+                        <!--            layout_input_personal_info-->
+                        <FrameLayout
+                            android:id="@+id/layout_input_personal_info_fragment_personal_info"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingVertical="8dp">
+
+                            <include layout="@layout/layout_input_personal_info" />
+                        </FrameLayout>
+
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="2dp"
+                            android:background="@color/grayLight"
+                            android:layout_marginHorizontal="24dp"
+                            android:layout_marginBottom="16dp"
+                            />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/Login_Info"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:textSize="11sp"
+                            android:textColor="@color/black"
+                            />
+
+
+                        <!--            layout_input_login-->
+                        <FrameLayout
+                            android:id="@+id/layout_input_login_fragment_personal_info"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingVertical="8dp">
+
+                            <include layout="@layout/layout_input_login" />
+                        </FrameLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/button_change_password_fragment_personal_info"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="16dp"
+                            android:text="@string/change_password"
+                            app:backgroundTint="@color/blueDark"
+                            app:cornerRadius="15dp" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/layout_company_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginVertical="24dp"
+                app:cardBackgroundColor="@color/gray"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="3dp">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="1dp"
+                    android:background="@color/white"
+                    app:cardCornerRadius="15dp"
+                    app:cardElevation="0dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="8dp"
+                        android:layout_marginVertical="16dp"
+                        android:orientation="vertical">
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginBottom="16dp"
+                            android:gravity="center_vertical"
+                            android:text="@string/Company_"
+                            android:textColor="@color/blueDark"
+                            android:textSize="17sp"
+                            android:textStyle="bold|italic" />
+
+                        <include layout="@layout/layout_recycler_view" />
+
+                        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                            android:id="@+id/button_add_company_fragment_personal_info"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:layout_marginEnd="8dp"
+                            app:elevation="0dp"
+                            android:src="@drawable/ic_add"
+                            app:fabSize="mini" />
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
+
+            <RelativeLayout
+                android:id="@+id/button_sign_out"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginVertical="32dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/text_sign_out"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Sign_out"
+                    android:textColor="@color/red"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="wrap_content"
+                    android:layout_height="2dp"
+                    android:layout_below="@id/text_sign_out"
+                    android:layout_alignStart="@+id/text_sign_out"
+                    android:layout_alignEnd="@+id/text_sign_out"
+                    android:background="@color/red" />
+            </RelativeLayout>
+
+        </LinearLayout>
+</ScrollView>

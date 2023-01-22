@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_account.xml"
+    app:startDestination="@id/fragment_waiting_for_account">
+    <fragment
+        android:id="@+id/fragment_waiting_for_account"
+        android:name="com.athand.intervention.ui.FragmentWaiting"
+        android:label="FragmentWaiting"
+        tools:layout="@layout/fragment_waiting" />
+
+    <fragment
+        android:id="@+id/fragment_login"
+        android:name="com.athand.intervention.ui.account.fragments.login.FragmentLogin"
+        android:label="FragmentLogin"
+        tools:layout="@layout/fragment_login" />
+
+    <fragment
+        android:id="@+id/fragment_personal_info"
+        android:name="com.athand.intervention.ui.account.fragments.personal_info.FragmentPersonalInfo"
+        android:label="FragmentPersonalInfo"
+        tools:layout="@layout/fragment_personal_info" />
+
+</navigation>

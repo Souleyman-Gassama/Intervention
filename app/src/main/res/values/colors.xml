@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="blueDark">#2979FF</color>
+    <color name="blue">#0091EA</color>
+    <color name="blueLight">#51BCFD</color>
+    <color name="goldDark">#AA8F35</color>
+    <color name="gold">#DFC364</color>
+
+    <color name="green">#64DD17</color>
+    <color name="red">#DD2C00</color>
+
+    <color name="grayLight">#EEEFF1</color>
+    <color name="gray">#BBBCBD</color>
+    <color name="grayDark">#808183</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="transparent">#00FFFFFF</color>
+</resources>

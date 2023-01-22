@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/grayLight"
+        android:orientation="vertical">
+
+        <!--    layout_view_top-->
+        <include layout="@layout/layout_view_top" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="8dp"
+                app:cardBackgroundColor="@color/gray"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="3dp">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="1dp"
+                    android:background="@color/white"
+                    app:cardCornerRadius="15dp"
+                    app:cardElevation="0dp">
+                    <ScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="40dp"
+                        android:orientation="vertical">
+
+                        <!--            layout_input_personal_info-->
+                        <FrameLayout
+                            android:id="@+id/layout_input_personal_info_fragment_login"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="8dp"
+                            android:visibility="gone">
+
+                            <include layout="@layout/layout_input_personal_info" />
+                        </FrameLayout>
+
+                        <!--            layout_input_login-->
+                        <FrameLayout
+                            android:id="@+id/layout_input_login_fragment_login"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="8dp"
+                            android:visibility="gone">
+
+                            <include layout="@layout/layout_input_login" />
+                        </FrameLayout>
+
+                        <!--            layout_button_account-->
+                        <FrameLayout
+                            android:id="@+id/layout_button_account_fragment_login"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="8dp">
+
+                            <include layout="@layout/layout_button_account" />
+                        </FrameLayout>
+                    </LinearLayout>
+                    </ScrollView>
+
+                </com.google.android.material.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
+        </FrameLayout>
+
+</LinearLayout>
