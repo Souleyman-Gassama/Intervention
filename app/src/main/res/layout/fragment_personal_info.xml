@@ -114,7 +114,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="16dp"
-                            android:text="@string/change_password"
+                            android:text="@string/Change_login_details"
+                            android:textAllCaps="false"
                             app:backgroundTint="@color/blueDark"
                             app:cornerRadius="15dp" />
 

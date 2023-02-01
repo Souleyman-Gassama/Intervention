@@ -61,7 +61,8 @@ class FragmentLogin : Fragment(), View.OnClickListener, PressBack {
         super.onViewCreated(view, savedInstanceState)
         configuration_Listener()
         configuration_Listener_Views_Visibility()
-        configuration_Listener_Result_Login()
+        display_Message()
+        navigation_In_App()
         configuration_Listener_Error()
     }
 
@@ -93,22 +94,22 @@ class FragmentLogin : Fragment(), View.OnClickListener, PressBack {
     private fun configuration_Listener_Edit_Text() {
         firstName?.editText?.addTextChangedListener { newString ->
             loginViewModel.set_Firste_Name(newString.toString())
-            firstName?.error = ""
+            remove_Error(firstName!!)
         }
 
         lastName?.editText?.addTextChangedListener { newString ->
             loginViewModel.set_Last_Name(newString.toString())
-            lastName?.error = ""
+            remove_Error(lastName!!)
         }
 
         email?.editText?.addTextChangedListener { newString ->
             loginViewModel.set_Email(newString.toString())
-            email?.error = ""
+            remove_Error(email!!)
         }
 
         password?.editText?.addTextChangedListener { newString ->
             loginViewModel.set_Password(newString.toString())
-            password?.error = ""
+            remove_Error(password!!)
         }
     }
 
@@ -141,23 +142,10 @@ class FragmentLogin : Fragment(), View.OnClickListener, PressBack {
         }
     }
 
-    private fun configuration_Listener_Result_Login() {
-        loginViewModel.get_Auth_Reponse().observe(viewLifecycleOwner) { reponse ->
-            when (reponse) {
-                SUCCESS_LOGIN -> {
-                    display_Toast(requireContext(), requireActivity().getString(R.string.Login_Successful))
-                    nav_To_InterventionTicketActivity(requireActivity())
-                }
-                FAILURE_LOGIN -> {
-                    display_Toast(requireContext(), requireActivity().getString(R.string.Failure_Login))
-                }
-                SUCCESS_CREATE -> {
-                    display_Toast(requireContext(), requireActivity().getString(R.string.Create_Successfully))
-                    nav_To_InterventionTicketActivity(requireActivity())
-                }
-                FAILURE_CREATE -> {
-                    display_Toast(requireContext(), requireActivity().getString(R.string.Failure_Create))
-                }
+    private fun navigation_In_App() {
+        loginViewModel.navigation_In_App().observe(viewLifecycleOwner) { direction ->
+            if (direction == DIRECTION_INTERVENTION_SLIP_ACTIVITY){
+                nav_To_InterventionTicketActivity(requireActivity())
             }
         }
     }
@@ -166,6 +154,7 @@ class FragmentLogin : Fragment(), View.OnClickListener, PressBack {
         Intent(activity, InterventionSlipActivity::class.java)
             .apply { startActivity(this) }
     }
+
 
     /**
      * UPDATE DISPLAY ______________________________________________
@@ -197,6 +186,9 @@ class FragmentLogin : Fragment(), View.OnClickListener, PressBack {
 
         buttonCreate?.setBackgroundColor(requireActivity().getColor(R.color.white))
         buttonCreate?.setTextColor(requireActivity().getColor(R.color.blue))
+
+        remove_Errors_From_All_Views()
+        close_Keyboard(requireActivity())
     }
 
     private fun make_Visible_Views_For_Connection() {
@@ -218,6 +210,28 @@ class FragmentLogin : Fragment(), View.OnClickListener, PressBack {
         buttonLogin?.visibility = GONE
         buttonCreate?.setBackgroundColor(requireActivity().getColor(R.color.blue))
         buttonCreate?.setTextColor(requireActivity().getColor(R.color.white))
+    }
+
+    private fun remove_Errors_From_All_Views() {
+        remove_Error(firstName!!)
+        remove_Error(lastName!!)
+        remove_Error(email!!)
+        remove_Error(password!!)
+    }
+
+    private fun remove_Error(view: TextInputLayout) {
+        view.error = ""
+//        view.isErrorEnabled = false
+    }
+
+    private fun display_Message() {
+        loginViewModel.make_Message_On_View().observe(viewLifecycleOwner) { message ->
+            var text = message.toString()
+            if (message is Int){
+                text = requireActivity().getString(message)
+            }
+            display_Toast(requireContext(), text)
+        }
     }
 
 

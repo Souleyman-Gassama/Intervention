@@ -38,7 +38,7 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/company_name"
+                android:hint="@string/Company_name"
                 android:inputType="textMultiLine"
                 android:textColor="@color/black"
                 android:textSize="18sp" />
@@ -58,7 +58,7 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/company_address"
+                android:hint="@string/Company_address"
                 android:inputType="textMultiLine"
                 android:textColor="@color/black"
                 android:textSize="18sp" />
@@ -78,7 +78,7 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/company_phone"
+                android:hint="@string/Company_phone"
                 android:imeOptions="actionNext"
                 android:inputType="numberDecimal"
                 android:singleLine="true"
@@ -100,7 +100,7 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/company_email"
+                android:hint="@string/Company_email"
                 android:imeOptions="actionNext"
                 android:inputType="textEmailAddress"
                 android:singleLine="true"

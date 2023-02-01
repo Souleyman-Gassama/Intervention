@@ -43,5 +43,6 @@
     <string name="Profil_">Profil :</string>
     <string name="Company_">Company :</string>
     <string name="Login_Info">Login Info</string>
+    <string name="Change_login_details">Change login details</string>
 
 </resources>

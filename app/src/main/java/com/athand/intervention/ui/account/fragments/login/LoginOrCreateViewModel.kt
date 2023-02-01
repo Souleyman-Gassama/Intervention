@@ -1,8 +1,12 @@
 package com.athand.intervention.ui.account.fragments.login
 
+import android.os.Message
 import androidx.lifecycle.*
-import com.athand.intervention.authentication.api.AuthApi
-import com.athand.intervention.authentication.firebase.AuthWithFirebase
+import com.athand.intervention.R
+import com.athand.intervention.authentication.AuthComponent
+import com.athand.intervention.authentication.component.AuthWithFirebaseComponent
+import com.athand.intervention.authentication.decor.FirebaseAuthWithEmailAndPasswordDecor
+import com.athand.intervention.authentication.factory.AuthFactory
 import com.athand.intervention.domain.auth.LoginByEmailAndPasswordWithFirebase
 import com.athand.intervention.data.repository.BaseRemoteRepository
 import com.athand.intervention.tools.*
@@ -24,10 +28,12 @@ class LoginOrCreateViewModel(
 ) : ViewModel(), LoginDataRequire, ProfileDataRequire {
 
     private lateinit var user: MyUser
-    private lateinit var authApi: AuthApi
+    private lateinit var authComponent: AuthComponent
 
     private var viewCurrentlyDisplayed: MutableLiveData<String>
-    private var authReponseForViews: MutableLiveData<String>
+
+    private var messageForViews: MutableLiveData<Any>
+    private var navigation: MutableLiveData<Int>
 
     private var firstNameInput: MutableLiveData<String?>
     private var lastNameInput: MutableLiveData<String?>
@@ -38,11 +44,10 @@ class LoginOrCreateViewModel(
     private var allErrorMap: MutableLiveData<Map<String, Boolean>>
 
     init {
-        authApi = AuthWithFirebase.get_Instance()
-
-        authReponseForViews = MutableLiveData("")
-
         viewCurrentlyDisplayed = MutableLiveData(INIT)
+
+        messageForViews = MutableLiveData()
+        navigation = MutableLiveData()
 
         firstNameInput = MutableLiveData("")
         lastNameInput = MutableLiveData("")
@@ -118,7 +123,8 @@ class LoginOrCreateViewModel(
     fun click_Button_Login() {
         if (viewCurrentlyDisplayed.value == INIT) {
             viewCurrentlyDisplayed.value = FOR_LOGIN
-            (authApi as AuthWithFirebase).auth_With(AUTH_EMAIL_AND_PASSWORD)
+//            (authComponent as AuthWithFirebaseComponent).auth_With(AUTH_EMAIL_AND_PASSWORD)
+            authComponent = AuthFactory().create(FIREBASE_AUTH_COMPONENT, AUTH_DECOR_EMAIL_AND_PASSWORD)
 
         } else {
             LoginByEmailAndPasswordWithFirebase(this){
@@ -133,7 +139,8 @@ class LoginOrCreateViewModel(
     fun click_Button_Create() {
         if (viewCurrentlyDisplayed.value == INIT) {
             viewCurrentlyDisplayed.value = FOR_CREATE
-            (authApi as AuthWithFirebase).auth_With(AUTH_EMAIL_AND_PASSWORD)
+            authComponent = AuthFactory().create(FIREBASE_AUTH_COMPONENT, AUTH_DECOR_EMAIL_AND_PASSWORD)
+//            (authComponent as AuthWithFirebaseComponent).auth_With(AUTH_EMAIL_AND_PASSWORD)
         } else {
             CreateByEmailAndPasswordWithFirebase(this){
                 reponse_Login_Or_Create(it)
@@ -156,15 +163,17 @@ class LoginOrCreateViewModel(
     private fun success_Auth(message: String) {
         when (message) {
             SUCCESS_LOGIN -> {
+                messageForViews.value = R.string.Login_Successful
+                navigation.value = DIRECTION_INTERVENTION_SLIP_ACTIVITY
                 get_User_From_Database()
             }
 
             SUCCESS_CREATE -> {
+                messageForViews.value = R.string.Create_Successfully
+                navigation.value = DIRECTION_INTERVENTION_SLIP_ACTIVITY
                 set_User_Object_To_FireBase()
             }
         }
-        authReponseForViews.value = message
-        authReponseForViews.value = ""
     }
 
     private fun error_Auth(result: AuthOrCreationResult) {
@@ -172,20 +181,22 @@ class LoginOrCreateViewModel(
             ERROR_INPUT -> {
                 set_Errors(result.inputErrorMap)
             }
+
+            FAILURE_LOGIN -> {
+                messageForViews.value = R.string.Failure_Login
+                set_User_Object_To_FireBase()
+            }
+            else -> {
+                messageForViews.value = result.message!!
+            }
         }
-    }
-
-
-    //Note: Update display based on authentication
-    fun get_Auth_Reponse(): MutableLiveData<String> {
-        return authReponseForViews
     }
 
     /**
      * GET DATA FROM DATABASE ______________________________________________
      */
     private fun get_User_From_Database(){
-        val uid = authApi.get_User_UID()!!
+        val uid = authComponent.get_User_UID()!!
         GetUserFromDatabase(baseRemoteRepository, baseLocalRepository, uid){ data ->
             if (data.success) {
             }else{
@@ -216,7 +227,7 @@ class LoginOrCreateViewModel(
      * CREATE USER ______________________________________________
      */
     private fun create_User_Object() {
-        val uid = authApi.get_User_UID()!!
+        val uid = authComponent.get_User_UID()!!
         user = MyUser(
             id = "$uid:${System.currentTimeMillis()}",
             uid = uid,
@@ -244,6 +255,21 @@ class LoginOrCreateViewModel(
 
     fun get_Errors(): MutableLiveData<Map<String, Boolean>> {
         return allErrorMap
+    }
+
+
+    /**
+     *SET MESSAGE ON VIEWS ______________________________________________
+     */
+    fun make_Message_On_View(): MutableLiveData<Any> {
+        return messageForViews
+    }
+
+    /**
+     *SET NAVIGATION ON APP ______________________________________________
+     */
+    fun navigation_In_App(): MutableLiveData<Int> {
+        return navigation
     }
 
 }

@@ -4,9 +4,34 @@ package com.athand.intervention.tools
  */
 
 /**
+ * NAVIGATION IN APP ___________________________________________
+ */
+val DIRECTION_INTERVENTION_SLIP_ACTIVITY = 1
+
+
+/**
  * AUTH ___________________________________________
  */
-val AUTH_EMAIL_AND_PASSWORD = "AUTH_EMAIL_AND_PASSWORD"
+val FIREBASE_AUTH_COMPONENT = "FIREBASE_AUTH_COMPONENT"
+val NO_AUTH_DECOR = "NO_AUTH_DECOR"
+val AUTH_DECOR_EMAIL_AND_PASSWORD = "AUTH_DECOR_EMAIL_AND_PASSWORD"
+
+
+/**
+ * REPONSE AUTH ___________________________________________
+ */
+val SUCCESS_CREATE = "SUCCESS_CREATE"
+val FAILURE_CREATE = "FAILURE_CREATE"
+
+val SUCCESS_LOGIN = "SUCCESS_LOGIN"
+val FAILURE_LOGIN = "FAILURE_LOGIN"
+
+val SUCCESS_SIGN_OUT = "SUCCESS_SIGN_OUT"
+val FAILURE_SIGN_OUT = "SUCCESS_SIGN_OUT"
+
+val SUCCESS_DELETE = "SUCCESS_DELETE"
+val FAILURE_DELETE = "FAILURE_DELETE"
+
 
 /**
  * VIEW VISIBILITY AND DATA CKECK ___________________________________________
@@ -24,25 +49,9 @@ val FOR_CREATE = "FOR_CREATE"
 
 
 /**
- * AUTH _________________________________________
+ * ERROR _________________________________________
  */
 val ERROR_INPUT = "ERROR_INPUT"
-
-
-/**
- * REPONSE FIREBASE ___________________________________________
- */
-val SUCCESS_CREATE = "SUCCESS_CREATE"
-val FAILURE_CREATE = "FAILURE_CREATE"
-
-val SUCCESS_LOGIN = "SUCCESS_LOGIN"
-val FAILURE_LOGIN = "FAILURE_LOGIN"
-
-val SUCCESS_SIGN_OUT = "SUCCESS_SIGN_OUT"
-val FAILURE_SIGN_OUT = "SUCCESS_SIGN_OUT"
-
-val SUCCESS_DELETE = "SUCCESS_DELETE"
-val FAILURE_DELETE = "FAILURE_DELETE"
 
 
 /**

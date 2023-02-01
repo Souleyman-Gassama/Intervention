@@ -1,4 +1,4 @@
-package com.athand.intervention.authentication.api
+package com.athand.intervention.authentication.decor.api
 
 import androidx.lifecycle.Observer
 import com.athand.intervention.domain.input_checking.DataRequireStrategy.LoginDataRequire

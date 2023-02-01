@@ -1,14 +1,29 @@
-package com.athand.intervention.authentication.firebase.auth_option
+package com.athand.intervention.authentication.decor
 
+import android.util.Log
 import androidx.lifecycle.Observer
-import com.athand.intervention.authentication.api.AuthWithEmailAndPasswordApi
-import com.athand.intervention.authentication.firebase.AuthWithFirebase
+import com.athand.intervention.authentication.AuthDecorator
+import com.athand.intervention.authentication.decor.api.AuthWithEmailAndPasswordApi
+import com.athand.intervention.authentication.component.AuthWithFirebaseComponent
 import com.athand.intervention.domain.input_checking.DataRequireStrategy.LoginDataRequire
 import com.athand.intervention.tools.*
+import com.google.firebase.FirebaseError
 import com.google.firebase.auth.FirebaseAuth
+import kotlin.math.absoluteValue
 
-class FirebaseAuthWithEmailAndPassword(val firebaseAuth: FirebaseAuth): AuthWithFirebase(),
+/**
+ * Cree le 31/01/2022 par Gassama Souleyman
+ */
+class FirebaseAuthWithEmailAndPasswordDecor(authApi: AuthWithFirebaseComponent): AuthDecorator(authApi),
     AuthWithEmailAndPasswordApi {
+
+    var auth: AuthWithFirebaseComponent
+    var firebaseAuth: FirebaseAuth
+
+    init {
+        auth = authApi
+        firebaseAuth = authApi.firebaseAuth
+    }
 
     private var email: String = ""
     private var password: String = ""
@@ -23,7 +38,7 @@ class FirebaseAuthWithEmailAndPassword(val firebaseAuth: FirebaseAuth): AuthWith
         get_Data(viewModel)
         firebaseAuth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener {
-                firebaseUser = it.user
+                auth.set_Firebase_User(it.user)
                 observeAuthReponse.onChanged(SUCCESS_LOGIN)
             }
             .addOnFailureListener {
@@ -37,18 +52,18 @@ class FirebaseAuthWithEmailAndPassword(val firebaseAuth: FirebaseAuth): AuthWith
         get_Data(viewModel)
         firebaseAuth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener {
-                firebaseUser = it.user
+                auth.set_Firebase_User(it.user)
                 observeAuthReponse.onChanged(SUCCESS_CREATE)
             }
 
             .addOnFailureListener {
-                observeAuthReponse.onChanged(FAILURE_CREATE)
+                observeAuthReponse.onChanged(it.message)
             }
     }
 
 
     override fun change_Email(email: String) {
-        firebaseUser?.updateEmail(email)
+        auth.get_Firebase_User()?.updateEmail(email)
             ?.addOnSuccessListener {
 
             }

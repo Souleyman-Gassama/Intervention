@@ -2,25 +2,23 @@ package com.athand.intervention.ui.account.fragments.personal_info
 
 import android.content.Context
 import androidx.lifecycle.*
-import com.athand.intervention.authentication.api.AuthApi
-import com.athand.intervention.authentication.api.AuthWithEmailAndPasswordApi
-import com.athand.intervention.authentication.firebase.AuthWithFirebase
-import com.athand.intervention.authentication.firebase.auth_option.FirebaseAuthWithEmailAndPassword
+import com.athand.intervention.authentication.AuthComponent
+import com.athand.intervention.authentication.decor.api.AuthWithEmailAndPasswordApi
+import com.athand.intervention.authentication.component.AuthWithFirebaseComponent
+import com.athand.intervention.authentication.decor.FirebaseAuthWithEmailAndPasswordDecor
+import com.athand.intervention.authentication.factory.AuthFactory
 import com.athand.intervention.data.entity.MyCompany
 import com.athand.intervention.data.entity.MyUser
 import com.athand.intervention.tools.*
 //import com.athand.intervention.domain.data_require.ProfileDataRequire
 import com.athand.intervention.data.repository.BaseLocalRepository
 import com.athand.intervention.data.repository.BaseRemoteRepository
-import com.athand.intervention.domain.auth.UpdateFirebaseAuthData
 import com.athand.intervention.domain.get_data.company.GetCompanyFromDatabase
 import com.athand.intervention.domain.get_data.user.GetUserFromDatabase
 import com.athand.intervention.domain.set_data.SetUserToDatabase
 import com.athand.intervention.domain.input_checking.CheckValidityOfInputsContext
-import com.athand.intervention.domain.input_checking.DataRequireStrategy
 import com.athand.intervention.domain.input_checking.DataRequireStrategy.*
 import com.athand.intervention.domain.input_checking.concrete_strategys.ResultsOfInputCheck
-import com.google.firebase.auth.FirebaseUser
 
 /**
  * Cree le 27/12/2022 par Gassama Souleyman
@@ -30,7 +28,8 @@ class PersonalInfoViewModel(
     private val baseLocalRepository: BaseLocalRepository
 ) : ViewModel(), ProfileDataRequire, EmailDataRequire {
 
-    private var authApi: AuthApi
+//    private var authComponent: AuthComponent
+    private var authComponent: AuthComponent
 
     private var user: MyUser? = null
     private var currentCompanyList: MutableList<MyCompany?> = mutableListOf()
@@ -53,8 +52,8 @@ class PersonalInfoViewModel(
 
 
     init {
-        authApi = AuthWithFirebase.get_Instance()
-
+        authComponent = AuthFactory().create(FIREBASE_AUTH_COMPONENT, AUTH_DECOR_EMAIL_AND_PASSWORD)
+                as FirebaseAuthWithEmailAndPasswordDecor
         firstNameInput = MutableLiveData("")
         lastNameInput = MutableLiveData("")
         emailInput = MutableLiveData("")
@@ -75,7 +74,7 @@ class PersonalInfoViewModel(
 
     //GET DATA FROM DATABASE ______________________________________________
     fun get_Current_User() {
-        val uid = authApi.get_User_UID()!!
+        val uid = authComponent.get_User_UID()!!
         GetUserFromDatabase(baseRemoteRepository, baseLocalRepository, uid){ result ->
             if (result.success) {
                 user = result.data as MyUser
@@ -85,7 +84,7 @@ class PersonalInfoViewModel(
     }
 
     fun get_Current_Company() {
-        val uid = authApi.get_User_UID()!!
+        val uid = authComponent.get_User_UID()!!
          getCompanyFromDatabase = GetCompanyFromDatabase(baseRemoteRepository, baseLocalRepository, uid){ result ->
             if (result.success) {
                 currentCompanyList = result.data as MutableList<MyCompany?>
@@ -163,12 +162,12 @@ class PersonalInfoViewModel(
 
     //CLICK BUTTON CHANGE PASSWORD ______________________________________________
     fun click_Change_Password() {
-        (authApi as AuthWithEmailAndPasswordApi).change_Password(emailInput.value!!)
+        (authComponent as AuthWithEmailAndPasswordApi).change_Password(emailInput.value!!)
     }
 
     //CLICK BUTTON SIGN OUT ______________________________________________
     fun click_Sign_Out() {
-        authApi.sign_Out(observeAuthReponse)
+        authComponent.sign_Out(observeAuthReponse)
     }
 
     //CLICK BUTTON ADD COMPANY ______________________________________________
@@ -219,7 +218,8 @@ class PersonalInfoViewModel(
     private fun set_User_To_FireBase(dateUpdate: Long) {
         if (emailIsUpdate){
             // Update Firebase Auth Data
-            (authApi as FirebaseAuthWithEmailAndPassword).change_Email(get_Email())
+            (authComponent as FirebaseAuthWithEmailAndPasswordDecor).change_Email(get_Email())
+//            authComponent.change_Email(get_Email())
         }
 
         if (userIsUpdate) {

@@ -12,11 +12,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import com.athand.intervention.R
-import com.athand.intervention.authentication.api.AuthApi
-import com.athand.intervention.authentication.firebase.AuthWithFirebase
+import com.athand.intervention.authentication.AuthComponent
+import com.athand.intervention.authentication.component.AuthWithFirebaseComponent
+import com.athand.intervention.authentication.factory.AuthFactory
+import com.athand.intervention.tools.FIREBASE_AUTH_COMPONENT
 import com.athand.intervention.tools.KEY_BUNDLE_DESTINATION
+import com.athand.intervention.tools.NO_AUTH_DECOR
 import com.athand.intervention.tools.close_Keyboard
-import com.athand.intervention.tools.display_Toast
 import com.athand.intervention.ui.account.activity.AccountActivity
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textview.MaterialTextView
@@ -26,7 +28,8 @@ import com.google.android.material.textview.MaterialTextView
  */
 class InterventionSlipActivity: AppCompatActivity(), OnClickListener {
 
-    private lateinit var firebaseAuthApi: AuthApi
+//    private lateinit var firebaseAuthComponent: AuthComponent
+    private lateinit var firebaseAuthComponent: AuthComponent
     private var isLogin: Boolean = false
 
     private lateinit var toolbar: Toolbar
@@ -68,8 +71,8 @@ class InterventionSlipActivity: AppCompatActivity(), OnClickListener {
 
     override fun onStart() {
         super.onStart()
-        firebaseAuthApi = AuthWithFirebase.get_Instance()
-        isLogin = firebaseAuthApi.is_Login()
+        firebaseAuthComponent = AuthFactory().create(FIREBASE_AUTH_COMPONENT, NO_AUTH_DECOR)
+        isLogin = firebaseAuthComponent.is_Login()
         set_Login_Data_To_Views()
     }
 
@@ -96,7 +99,7 @@ class InterventionSlipActivity: AppCompatActivity(), OnClickListener {
 
     fun set_Login_Data_To_Views(){
         if (isLogin) {
-            textButtonAccount.text = firebaseAuthApi.get_User_Auth_Name()
+            textButtonAccount.text = firebaseAuthComponent.get_User_Auth_Name()
             iconButtonAccount.imageTintList = ColorStateList.valueOf(getColor(R.color.green))
         }else{
             textButtonAccount.text = getString(R.string.Login)

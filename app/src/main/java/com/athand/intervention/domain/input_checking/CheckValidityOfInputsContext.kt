@@ -18,6 +18,7 @@ class CheckValidityOfInputsContext(var data: DataRequireStrategy) {
     private lateinit var errorEntries: InputErrorChecked
 
     fun check_If_Data_Is_Valid(viewCurrentlyDisplayed: String, result: ResultsOfInputCheck) {
+
         when (viewCurrentlyDisplayed) {
             FOR_CREATE -> {
                 errorEntries = CheckInputsForCreateAccountInput(data, result)
