@@ -14,7 +14,8 @@ import kotlin.math.absoluteValue
 /**
  * Cree le 31/01/2022 par Gassama Souleyman
  */
-class FirebaseAuthWithEmailAndPasswordDecor(authApi: AuthWithFirebaseComponent): AuthDecorator(authApi),
+//class FirebaseAuthWithEmailAndPasswordDecor(authApi: AuthWithFirebaseComponent): AuthDecorator(authApi),
+class FirebaseAuthWithEmailAndPasswordDecor(authApi: AuthWithFirebaseComponent) :
     AuthWithEmailAndPasswordApi {
 
     var auth: AuthWithFirebaseComponent
