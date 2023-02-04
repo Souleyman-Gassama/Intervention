@@ -13,6 +13,6 @@ __Les librairies externe utiliser__
  * `Room database`.
 
 __L'architecture__    
-Mon développement est basé sur les bonne $pratique d'Android architecture component.  
+Mon développement est basé sur les bonne pratique d'`Android architecture component`.  
 Ainsi elle intègre, l'architecture `MVVM`, la `Clean architecture` et les principe `SOLID`.  
-J'utilise le `pattern Repository`, `Stratégy`, `Decorator` et `SimpleFactory`
+J'utilise aussi les `pattern Repository`, `Stratégy`, `Decorator` et `SimpleFactory`.
