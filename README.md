@@ -8,11 +8,11 @@ Intervention est une application qui permet de dématérialiser l'édition d'un 
 Développé sur Android studio en langage kotlin et XML.
 
 __Les librairies externe utiliser__
- * navigation component
- * firebase authentification et firestore
- * room database.
+ * `Navigation component`
+ * `Firebase authentification` et `Firestore`
+ * `Room database`.
 
 __L'architecture__    
-Mon développement est basé sur les bonne pratique d'Android architecture component.  
-Ainsi elle intègre, l'architecture mvvm, la clean architecture et les principe solid.  
-J'utilise le pattern repository, stratégie et simpleFactory
+Mon développement est basé sur les bonne pratique d'`Android architecture component`.  
+Ainsi elle intègre, l'architecture `MVVM`, la `Clean architecture` et les principe `SOLID`.  
+J'utilise aussi les `pattern Repository`, `Stratégy`, `Decorator` et `SimpleFactory`.
