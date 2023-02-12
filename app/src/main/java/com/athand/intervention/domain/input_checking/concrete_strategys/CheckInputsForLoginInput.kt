@@ -1,6 +1,8 @@
 package com.athand.intervention.domain.input_checking.concrete_strategys
 
+import android.util.Log
 import android.util.Patterns
+import androidx.core.util.PatternsCompat
 import com.athand.intervention.domain.input_checking.CheckValidityOfInputsContext.InputErrorChecked
 import com.athand.intervention.domain.input_checking.DataRequireStrategy.LoginDataRequire
 import com.athand.intervention.tools.KEY_EMAIL
@@ -33,7 +35,8 @@ class CheckInputsForLoginInput(
         if (passwordString.contentEquals("") || passwordString?.length!! < 6) {
             passwordError = true
         }
-        if (!Patterns.EMAIL_ADDRESS.matcher(emailString).matches()) {
+
+        if (!PatternsCompat.EMAIL_ADDRESS.matcher(emailString).matches()) {
             emailError = true
         }
         return !passwordError && !emailError
