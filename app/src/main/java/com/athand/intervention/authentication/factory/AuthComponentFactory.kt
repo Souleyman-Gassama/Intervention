@@ -6,21 +6,21 @@ import com.athand.intervention.authentication.component.AuthWithFirebaseComponen
 import com.athand.intervention.tools.FIREBASE_AUTH_COMPONENT
 
 class AuthComponentFactory {
+
     companion object {
         var authComponentFactory: AuthComponent? = null
-    }
 
-    fun create(component: String): AuthComponent {
-        when (component) {
-            FIREBASE_AUTH_COMPONENT -> {
-                Log.d("eeeee", "$authComponentFactory")
-                if (authComponentFactory is AuthWithFirebaseComponent) {
+        fun create(component: String): AuthComponent {
+            when (component) {
+                FIREBASE_AUTH_COMPONENT -> {
+                    if ( !(authComponentFactory is AuthWithFirebaseComponent) ) {
+                        authComponentFactory = AuthWithFirebaseComponent()
+                    }
                     return authComponentFactory!!
                 }
-                return AuthWithFirebaseComponent()
-            }
-            else -> {
-                throw IllegalArgumentException("Unknown AuthWithFirebaseComponent class")
+                else -> {
+                    throw IllegalArgumentException("Unknown AuthWithFirebaseComponent class")
+                }
             }
         }
     }

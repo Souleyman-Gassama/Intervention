@@ -1,21 +1,16 @@
-package com.athand.intervention.authentication.decor
+package com.athand.intervention.authentication.decor.strategy_auth_email_and_password
 
-import android.util.Log
 import androidx.lifecycle.Observer
-import com.athand.intervention.authentication.AuthDecorator
-import com.athand.intervention.authentication.decor.api.AuthWithEmailAndPasswordApi
 import com.athand.intervention.authentication.component.AuthWithFirebaseComponent
+import com.athand.intervention.authentication.decor.AuthWithEmailAndPasswordApi
 import com.athand.intervention.domain.input_checking.DataRequireStrategy.LoginDataRequire
 import com.athand.intervention.tools.*
-import com.google.firebase.FirebaseError
 import com.google.firebase.auth.FirebaseAuth
-import kotlin.math.absoluteValue
 
 /**
- * Cree le 31/01/2022 par Gassama Souleyman
+ * Cree le 31/12/2022 par Gassama Souleyman
  */
-//class FirebaseAuthWithEmailAndPasswordDecor(authApi: AuthWithFirebaseComponent): AuthDecorator(authApi),
-class FirebaseAuthWithEmailAndPasswordDecor(authApi: AuthWithFirebaseComponent) :
+class FirebaseAuthWithEmailAndPassword(authApi: AuthWithFirebaseComponent) :
     AuthWithEmailAndPasswordApi {
 
     var auth: AuthWithFirebaseComponent
@@ -29,13 +24,15 @@ class FirebaseAuthWithEmailAndPasswordDecor(authApi: AuthWithFirebaseComponent) 
     private var email: String = ""
     private var password: String = ""
 
-    private fun get_Data(viewModel: LoginDataRequire){
+    private fun get_Data(viewModel: LoginDataRequire) {
         email = viewModel.get_Email()
         password = viewModel.get_Password()
     }
 
-    override fun sign_In_With_Email_And_Password
-                (viewModel: LoginDataRequire, observeAuthReponse: Observer<String>) {
+    override fun sign_In_With_Email_And_Password(
+        viewModel: LoginDataRequire,
+        observeAuthReponse: Observer<String>
+    ) {
         get_Data(viewModel)
         firebaseAuth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener {
@@ -48,8 +45,10 @@ class FirebaseAuthWithEmailAndPasswordDecor(authApi: AuthWithFirebaseComponent) 
 
     }
 
-    override fun create_With_Email_And_Password
-                (viewModel: LoginDataRequire, observeAuthReponse: Observer<String>) {
+    override fun create_With_Email_And_Password(
+        viewModel: LoginDataRequire,
+        observeAuthReponse: Observer<String>
+    ) {
         get_Data(viewModel)
         firebaseAuth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener {
@@ -63,14 +62,22 @@ class FirebaseAuthWithEmailAndPasswordDecor(authApi: AuthWithFirebaseComponent) 
     }
 
 
-    override fun change_Email(email: String) {
-        auth.get_Firebase_User()?.updateEmail(email)
+    override fun change_Auth_Data(authData: LoginDataRequire, observeAuthReponse: Observer<String>) {
+        firebaseAuth.setLanguageCode("fr")
+
+        firebaseAuth.currentUser?.updatePassword(authData.get_Password())
             ?.addOnSuccessListener {
-
+                firebaseAuth.currentUser?.updateEmail(authData.get_Email())
+                    ?.addOnSuccessListener {
+                        observeAuthReponse.onChanged("success update Login data")
+                    }
+                    ?.addOnFailureListener {
+                        observeAuthReponse.onChanged(it.message)
+                    }
             }
-    }
+            ?.addOnFailureListener {
+                observeAuthReponse.onChanged(it.message)
+            }
 
-    override fun change_Password(emailString: String) {
-        firebaseAuth.sendPasswordResetEmail(emailString)
     }
 }

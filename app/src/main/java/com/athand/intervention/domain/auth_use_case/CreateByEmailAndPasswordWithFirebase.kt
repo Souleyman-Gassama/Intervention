@@ -1,14 +1,14 @@
-package com.athand.intervention.domain.auth
+package com.athand.intervention.domain.auth_use_case
 
 import androidx.lifecycle.Observer
-import com.athand.intervention.authentication.decor.FirebaseAuthWithEmailAndPasswordDecor
+import com.athand.intervention.authentication.decor.AuthWithEmailAndPasswordDecor
 import com.athand.intervention.authentication.factory.AuthFactory
+import com.athand.intervention.domain.input_checking.CheckInputsStrategyFactory
 import com.athand.intervention.domain.input_checking.CheckValidityOfInputsContext
 import com.athand.intervention.domain.input_checking.DataRequireStrategy
 import com.athand.intervention.domain.input_checking.DataRequireStrategy.LoginDataRequire
 import com.athand.intervention.domain.input_checking.concrete_strategys.ResultsOfInputCheck
 import com.athand.intervention.tools.*
-import com.google.firebase.auth.AuthResult
 
 /**
  * Auteur Gassama Souleyman
@@ -18,18 +18,19 @@ class CreateByEmailAndPasswordWithFirebase(
     var resultCreate: (AuthOrCreationResult) -> Unit
 ) {
 
-    var authApi: FirebaseAuthWithEmailAndPasswordDecor
+    var authApi: AuthWithEmailAndPasswordDecor
 
     init {
-        authApi = AuthFactory().create(FIREBASE_AUTH_COMPONENT, AUTH_DECOR_EMAIL_AND_PASSWORD)
-                as FirebaseAuthWithEmailAndPasswordDecor
+        authApi = AuthFactory.create(FIREBASE_AUTH_COMPONENT, AUTH_DECOR_EMAIL_AND_PASSWORD)
+                as AuthWithEmailAndPasswordDecor
         execute()
     }
 
     fun execute() {
         var resultInputCreate = get_Configuration_Of_Input_Verification_Result()
-        CheckValidityOfInputsContext(data)
-            .check_If_Data_Is_Valid( FOR_CREATE, resultInputCreate )
+        val strategy =
+            CheckInputsStrategyFactory(data, FOR_CREATE, resultInputCreate).create()
+        CheckValidityOfInputsContext(strategy).check_If_Data_Is_Valid()
     }
 
 /**
@@ -58,7 +59,7 @@ class CreateByEmailAndPasswordWithFirebase(
     private fun get_Authentication_Result_Configuration(): Observer<String> {
         return Observer<String> { reponse ->
             var isSuccess = false
-            if( reponse.equals(SUCCESS_LOGIN) ) {
+            if( reponse.equals(SUCCESS_CREATE) ) {
                 isSuccess = true
             }
 

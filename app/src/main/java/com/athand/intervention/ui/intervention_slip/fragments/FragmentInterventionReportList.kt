@@ -1,4 +1,4 @@
-package com.athand.intervention.ui.intervention_report.fragments
+package com.athand.intervention.ui.intervention_slip.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater

@@ -6,7 +6,6 @@ package com.athand.intervention.ui.account.fragments.personal_info
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
@@ -23,7 +22,6 @@ import com.athand.intervention.data.entity.MyCompany
 import com.athand.intervention.di.FactoryAccountViewModel
 import com.athand.intervention.domain.PressBack
 import com.athand.intervention.tools.*
-import com.athand.intervention.ui.account.fragments.login.LoginOrCreateViewModel
 import com.athand.intervention.ui.account.fragments.personal_info.adapter.CompanysRecyclerViewAdapter
 import com.athand.intervention.ui.account.fragments.personal_info.adapter.CompanysRecyclerViewAdapter.CallbackCompanyRecyclerView
 import com.google.android.material.button.MaterialButton
@@ -41,9 +39,10 @@ class FragmentPersonalInfo : Fragment(), OnClickListener, CallbackCompanyRecycle
     private var firstName: TextInputLayout? = null
     private var lastName: TextInputLayout? = null
     private var email: TextInputLayout? = null
+    private var password: TextInputLayout? = null
 
     private var recyclerView: RecyclerView? = null
-    private var buttonChangePassword: MaterialButton? = null
+    private var buttonChangeAuthData: MaterialButton? = null
 
     private var buttonEditOrSave: MaterialButton? = null
     private var buttonCreateCompany: FloatingActionButton? = null
@@ -51,7 +50,7 @@ class FragmentPersonalInfo : Fragment(), OnClickListener, CallbackCompanyRecycle
     private var buttonSignOut: RelativeLayout? = null
 
     private var companyList: MutableList<MyCompany?> = mutableListOf()
-    private var isEditable: Boolean = false
+    private var isEditableProfil: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -69,6 +68,7 @@ class FragmentPersonalInfo : Fragment(), OnClickListener, CallbackCompanyRecycle
         configuration_Recycler_View()
         configuration_Listener_Error()
         configuration_Listener_Enable_View()
+        configuration_Listener_Can_Click_Button()
         configuration_Listener_Edit_Text()
         configuration_Listener_Auth_Statue()
         get_Data()
@@ -87,10 +87,11 @@ class FragmentPersonalInfo : Fragment(), OnClickListener, CallbackCompanyRecycle
         firstName = view.findViewById(R.id.first_name_layout_personal_info)
         lastName = view.findViewById(R.id.last_name_layout_personal_info)
         email = view.findViewById(R.id.email_layout_login)
+        password = view.findViewById(R.id.password_layout_login)
 
         recyclerView = view.findViewById(R.id.recycler_view_list)
 
-        buttonChangePassword = view.findViewById(R.id.button_change_password_fragment_personal_info)
+        buttonChangeAuthData = view.findViewById(R.id.button_change_auth_data_fragment_personal_info)
         buttonEditOrSave = view.findViewById(R.id.button_Edit_Or_Save_fragment_personal_info)
         buttonCreateCompany = view.findViewById(R.id.button_add_company_fragment_personal_info)
 
@@ -127,6 +128,11 @@ class FragmentPersonalInfo : Fragment(), OnClickListener, CallbackCompanyRecycle
             personalInfoViewModel.set_Email(newString.toString())
             email?.error = ""
         }
+
+        password?.editText?.addTextChangedListener { newString ->
+            personalInfoViewModel.set_Password(newString.toString())
+            password?.error = ""
+        }
     }
 
     /**
@@ -149,7 +155,7 @@ class FragmentPersonalInfo : Fragment(), OnClickListener, CallbackCompanyRecycle
      */
     private fun configuration_Listener() {
         buttonNavUp?.setOnClickListener(this)
-        buttonChangePassword?.setOnClickListener(this)
+        buttonChangeAuthData?.setOnClickListener(this)
         buttonEditOrSave?.setOnClickListener(this)
         buttonCreateCompany?.setOnClickListener(this)
         buttonSignOut?.setOnClickListener(this)
@@ -160,12 +166,12 @@ class FragmentPersonalInfo : Fragment(), OnClickListener, CallbackCompanyRecycle
             buttonNavUp -> {
                 requireActivity().finish()
             }
-            buttonChangePassword -> {
-                personalInfoViewModel.click_Change_Password()
+            buttonChangeAuthData -> {
+                personalInfoViewModel.click_Change_Auth_Data()
             }
 
             buttonEditOrSave -> {
-                personalInfoViewModel.click_Button_Edit_Or_Save(isEditable)
+                personalInfoViewModel.click_Button_Edit_Or_Save(isEditableProfil)
             }
 
             buttonCreateCompany -> {
@@ -187,36 +193,51 @@ class FragmentPersonalInfo : Fragment(), OnClickListener, CallbackCompanyRecycle
     }
 
     /**
+     * CONFIGURATION ENABLE BUTTON ______________________________________________
+     */
+    private fun configuration_Listener_Can_Click_Button() {
+        personalInfoViewModel.get_Click_Change_Pofile_Data().observe(viewLifecycleOwner) { clickable ->
+            set_Enable_View(buttonEditOrSave, clickable!!)
+        }
+
+        personalInfoViewModel.get_Click_Change_Login_Data().observe(viewLifecycleOwner) { clickable ->
+            set_Enable_View(buttonChangeAuthData, clickable!!)
+        }
+    }
+
+
+    /**
      * CONFIGURATION EDITABLE ______________________________________________
      */
-    fun configuration_Listener_Enable_View() {
-        personalInfoViewModel.get_If_Can_Edit().observe(viewLifecycleOwner) { editable ->
-            isEditable = editable!!
-            enable_All_View(isEditable)
-            update_Data_Button_Edit_Or_Save(isEditable)
+    private fun configuration_Listener_Enable_View() {
+        personalInfoViewModel.get_If_Can_Edit_Profil_Data().observe(viewLifecycleOwner) { editable ->
+            isEditableProfil = editable!!
+            enable_All_Profil_View(isEditableProfil)
+            update_Data_Button_Edit_Or_Save(isEditableProfil)
+        }
+
+        personalInfoViewModel.get_If_Can_Edit_Login_Data().observe(viewLifecycleOwner) { editable ->
+//            isEditableLogin = editable!!
+//            enable_All_Login_View(isEditableLogin)
+            enable_All_Login_View(editable!!)
         }
     }
 
-    fun enable_All_View(enable: Boolean) {
+    private fun enable_All_Profil_View(enable: Boolean) {
         set_Enable_Edite_Text(firstName, enable)
         set_Enable_Edite_Text(lastName, enable)
+    }
+
+    private fun enable_All_Login_View(enable: Boolean) {
         set_Enable_Edite_Text(email, enable)
-        set_Visibility_View(buttonChangePassword, enable)
+        set_Visibility_View(password, enable)
     }
 
-    private fun set_Visibility_View(view: View?, enable: Boolean) {
-        if (enable) {
-            view?.visibility = VISIBLE
-        }else{
-            view?.visibility = GONE
-        }
-    }
-
-    fun set_Enable_View(view: View?, enable: Boolean) {
+    private fun set_Enable_View(view: View?, enable: Boolean) {
         view?.isEnabled = enable
     }
 
-    fun set_Enable_Edite_Text(view: TextInputLayout?, enable: Boolean) {
+    private fun set_Enable_Edite_Text(view: TextInputLayout?, enable: Boolean) {
         set_Enable_View(view?.editText!!, enable)
         set_Strock_Edite_Text(view, enable)
     }
@@ -293,8 +314,14 @@ class FragmentPersonalInfo : Fragment(), OnClickListener, CallbackCompanyRecycle
         personalInfoViewModel.dispaly_Message().observe(viewLifecycleOwner){
             var message: String = ""
             when(it){
+                is Int ->{
+                    message = requireActivity().getString(R.string.Success_update_login_data)
+                }
                 SUCCESS_DELETE ->{
                     message = requireActivity().getString(R.string.Successfully_deleted)
+                }
+                else ->{
+                    message = it.toString()
                 }
             }
             display_Toast(requireContext(), message)
@@ -305,7 +332,6 @@ class FragmentPersonalInfo : Fragment(), OnClickListener, CallbackCompanyRecycle
      * VISIBILITY VIEW ______________________________________________
      */
     private fun init_Of_View_Visibility(view: View?) {
-        view?.findViewById<TextInputLayout>(R.id.password_layout_login)?.visibility = GONE
         view?.findViewById<RelativeLayout>(R.id.button_reset_password)?.visibility = GONE
     }
 
@@ -327,6 +353,9 @@ class FragmentPersonalInfo : Fragment(), OnClickListener, CallbackCompanyRecycle
                         }
                         KEY_LAST_NAME -> {
                             set_Error_To_View(lastName)
+                        }
+                        KEY_PASSWORD -> {
+                            set_Error_To_View(password)
                         }
                     }
                 }

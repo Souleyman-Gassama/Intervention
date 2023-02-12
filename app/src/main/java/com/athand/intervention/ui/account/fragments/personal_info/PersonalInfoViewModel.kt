@@ -1,20 +1,21 @@
 package com.athand.intervention.ui.account.fragments.personal_info
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.*
+import com.athand.intervention.R
 import com.athand.intervention.authentication.AuthComponent
-import com.athand.intervention.authentication.decor.api.AuthWithEmailAndPasswordApi
-import com.athand.intervention.authentication.component.AuthWithFirebaseComponent
-import com.athand.intervention.authentication.decor.FirebaseAuthWithEmailAndPasswordDecor
+import com.athand.intervention.authentication.decor.AuthWithEmailAndPasswordApi
+import com.athand.intervention.authentication.decor.AuthWithEmailAndPasswordDecor
 import com.athand.intervention.authentication.factory.AuthFactory
 import com.athand.intervention.data.entity.MyCompany
 import com.athand.intervention.data.entity.MyUser
 import com.athand.intervention.tools.*
-//import com.athand.intervention.domain.data_require.ProfileDataRequire
 import com.athand.intervention.data.repository.BaseLocalRepository
 import com.athand.intervention.data.repository.BaseRemoteRepository
 import com.athand.intervention.domain.get_data.company.GetCompanyFromDatabase
 import com.athand.intervention.domain.get_data.user.GetUserFromDatabase
+import com.athand.intervention.domain.input_checking.CheckInputsStrategyFactory
 import com.athand.intervention.domain.set_data.SetUserToDatabase
 import com.athand.intervention.domain.input_checking.CheckValidityOfInputsContext
 import com.athand.intervention.domain.input_checking.DataRequireStrategy.*
@@ -26,7 +27,7 @@ import com.athand.intervention.domain.input_checking.concrete_strategys.ResultsO
 class PersonalInfoViewModel(
     private val baseRemoteRepository: BaseRemoteRepository,
     private val baseLocalRepository: BaseLocalRepository
-) : ViewModel(), ProfileDataRequire, EmailDataRequire {
+) : ViewModel(), ProfileDataRequire, LoginDataRequire {
 
 //    private var authComponent: AuthComponent
     private var authComponent: AuthComponent
@@ -34,26 +35,34 @@ class PersonalInfoViewModel(
     private var user: MyUser? = null
     private var currentCompanyList: MutableList<MyCompany?> = mutableListOf()
     private var companyList: MutableLiveData<MutableList<MyCompany?>>
+    private var newPassword: String? = ""
 
     private var firstNameInput: MutableLiveData<String?>
     private var lastNameInput: MutableLiveData<String?>
     private var emailInput: MutableLiveData<String?>
 
-    private var canEdit: MutableLiveData<Boolean?>
+    private var canEditProfilData: MutableLiveData<Boolean?>
+    private var canEditLoginData: MutableLiveData<Boolean?>
+    private var canClickChangePofileData: MutableLiveData<Boolean?>
+    private var canClickChangeLoginData: MutableLiveData<Boolean?>
 
     private var allErrorMap: MutableLiveData<Map<String, Boolean>>
 
     private var isLogin: MutableLiveData<Boolean>
 
     private var userIsUpdate = false
-    private var emailIsUpdate = false
-    private var displayMessageInView: MutableLiveData<String>
+    private var authDataIsUpdate = false
+
+    private var displayMessageInView: MutableLiveData<Any>
+
     private lateinit var getCompanyFromDatabase: GetCompanyFromDatabase
 
 
     init {
-        authComponent = AuthFactory().create(FIREBASE_AUTH_COMPONENT, AUTH_DECOR_EMAIL_AND_PASSWORD)
-                as FirebaseAuthWithEmailAndPasswordDecor
+        authComponent = AuthFactory.create(FIREBASE_AUTH_COMPONENT, AUTH_DECOR_EMAIL_AND_PASSWORD)
+//        authComponent = AuthFactory().create(FIREBASE_AUTH_COMPONENT, AUTH_DECOR_EMAIL_AND_PASSWORD)
+                as AuthWithEmailAndPasswordDecor
+//                as FirebaseAuthWithEmailAndPassword
         firstNameInput = MutableLiveData("")
         lastNameInput = MutableLiveData("")
         emailInput = MutableLiveData("")
@@ -61,13 +70,17 @@ class PersonalInfoViewModel(
         companyList = MutableLiveData(mutableListOf())
 
         isLogin = MutableLiveData(true)
-        canEdit = MutableLiveData(false)
+        canEditProfilData = MutableLiveData(false)
+        canEditLoginData = MutableLiveData(false)
+        canClickChangePofileData = MutableLiveData(true)
+        canClickChangeLoginData = MutableLiveData(true)
 
         allErrorMap = MutableLiveData(mutableMapOf())
         displayMessageInView = MutableLiveData()
     }
 
     override fun onCleared() {
+        Log.d("eeeee", "clear")
         getCompanyFromDatabase.stop_Observe_Data()
         super.onCleared()
     }
@@ -119,6 +132,10 @@ class PersonalInfoViewModel(
         return user?.email!!
     }
 
+    override fun get_Password(): String {
+        return newPassword!!
+    }
+
     //GETTER FOR UPDATE VIEWS ______________________________________________
     fun get_Firste_Name_For_View(): MutableLiveData<String?> {
         return firstNameInput
@@ -139,30 +156,73 @@ class PersonalInfoViewModel(
 
     //SETTER UPDATE FOR OBJECT ______________________________________________
     fun set_Firste_Name(valueString: String) {
-        userIsUpdate = true
-        user?.firstName = valueString
+        if ( !user?.firstName.equals(valueString) ) {
+            userIsUpdate = true
+            user?.firstName = valueString
+        }
     }
 
     fun set_Last_Name(valueString: String) {
-        userIsUpdate = true
-        user?.lastName = valueString
+        if ( !user?.lastName.equals(valueString) ) {
+            userIsUpdate = true
+            user?.lastName = valueString
+        }
     }
 
     fun set_Email(valueString: String) {
-        userIsUpdate = true
-        emailIsUpdate = true
-        user?.email = valueString
+        if ( !user?.email.equals(valueString) ) {
+            userIsUpdate = true
+            authDataIsUpdate = true
+            user?.email = valueString
+        }
     }
 
+    fun set_Password(valueString: String) {
+        if ( !newPassword.equals(valueString) ) {
+            authDataIsUpdate = true
+            newPassword = valueString
+        }
+    }
 
     //CLICK BUTTON PRESS BACK ______________________________________________
      fun press_Back_From_Activity(): Boolean {
         return true
     }
 
-    //CLICK BUTTON CHANGE PASSWORD ______________________________________________
-    fun click_Change_Password() {
-        (authComponent as AuthWithEmailAndPasswordApi).change_Password(emailInput.value!!)
+    //CLICK BUTTON CHANGE AUTH DATA ______________________________________________
+    fun click_Change_Auth_Data() {
+        if (canEditLoginData.value!!){
+            canClickChangeLoginData.value = false
+            val strategy =
+                CheckInputsStrategyFactory(this, FOR_LOGIN, resultInputLoginData).create()
+            CheckValidityOfInputsContext(strategy)
+                .check_If_Data_Is_Valid()
+        }else{
+            set_If_Can_Edit_Login_Data(true)
+        }
+    }
+
+    private val resultInputLoginData = object: ResultsOfInputCheck {
+        override fun success() {
+            save_New_Auth_Data()
+        }
+
+        override fun failure(errorMap: MutableMap<String, Boolean>) {
+            set_Errors(errorMap)
+            canClickChangeLoginData.value = true
+        }
+    }
+    //CLICK BUTTON SAVE NEW AUTH DAT ______________________________________________
+    fun save_New_Auth_Data() {
+        (authComponent as AuthWithEmailAndPasswordApi).change_Auth_Data(this){
+            var message: Any = it
+            if (it.equals(SUCCESS_UPDATE_LOGIN_DATA)){
+                message = R.string.Success_update_login_data
+            }
+            displayMessageInView.value = message
+            canClickChangeLoginData.value = true
+            set_If_Can_Edit_Login_Data(false)
+        }
     }
 
     //CLICK BUTTON SIGN OUT ______________________________________________
@@ -192,21 +252,25 @@ class PersonalInfoViewModel(
     //CLICK BUTTON EDIT OR SAVE ______________________________________________
     fun click_Button_Edit_Or_Save(isEditable: Boolean) {
         if (isEditable) {
-           CheckValidityOfInputsContext(this)
-               .check_If_Data_Is_Valid(FOR_PERSONAL_INFO, result)
+            canClickChangePofileData.value = false
+            val strategy =
+                CheckInputsStrategyFactory(this, FOR_LOGIN, resultInputProfil).create()
+            CheckValidityOfInputsContext(strategy)
+               .check_If_Data_Is_Valid()
 
         } else {
-            set_If_Can_Edit(true)
+            set_If_Can_Edit_Profil_Data(true)
         }
     }
 
-    private val result = object: ResultsOfInputCheck {
+    private val resultInputProfil = object: ResultsOfInputCheck {
         override fun success() {
             save_Data()
         }
 
         override fun failure(errorMap: MutableMap<String, Boolean>) {
             set_Errors(errorMap)
+            canClickChangePofileData.value = true
         }
     }
 
@@ -216,12 +280,6 @@ class PersonalInfoViewModel(
     }
 
     private fun set_User_To_FireBase(dateUpdate: Long) {
-        if (emailIsUpdate){
-            // Update Firebase Auth Data
-            (authComponent as FirebaseAuthWithEmailAndPasswordDecor).change_Email(get_Email())
-//            authComponent.change_Email(get_Email())
-        }
-
         if (userIsUpdate) {
             user?.dateUpdate = dateUpdate
             SetUserToDatabase(baseRemoteRepository, baseLocalRepository, user!!){
@@ -230,7 +288,8 @@ class PersonalInfoViewModel(
                 }else{
                     displayMessageInView.value = "Faillure"
                 }
-                set_If_Can_Edit(false)
+                canClickChangePofileData.value = true
+                set_If_Can_Edit_Profil_Data(false)
             }
         }
     }
@@ -251,17 +310,35 @@ class PersonalInfoViewModel(
     }
 
 
-    // IF VIEW IS EDITABLE ________________________________________
-    fun set_If_Can_Edit(editable: Boolean) {
-        canEdit.value = editable
+    // IF VIEW IS CLICKABLE ________________________________________
+    fun get_Click_Change_Pofile_Data(): MutableLiveData<Boolean?>{
+        return canClickChangePofileData
     }
 
-    fun get_If_Can_Edit(): MutableLiveData<Boolean?> {
-        return canEdit
+    fun get_Click_Change_Login_Data(): MutableLiveData<Boolean?>{
+        return canClickChangeLoginData
     }
 
     // IF VIEW IS EDITABLE ________________________________________
-    fun dispaly_Message(): MutableLiveData<String> {
+    fun set_If_Can_Edit_Profil_Data(editable: Boolean) {
+        canEditProfilData.value = editable
+    }
+
+    fun get_If_Can_Edit_Profil_Data(): MutableLiveData<Boolean?> {
+        return canEditProfilData
+    }
+
+
+    fun set_If_Can_Edit_Login_Data(editable: Boolean) {
+        canEditLoginData.value = editable
+    }
+
+    fun get_If_Can_Edit_Login_Data(): MutableLiveData<Boolean?> {
+        return canEditLoginData
+    }
+
+    // IF VIEW IS EDITABLE ________________________________________
+    fun dispaly_Message(): MutableLiveData<Any> {
         return displayMessageInView
     }
 

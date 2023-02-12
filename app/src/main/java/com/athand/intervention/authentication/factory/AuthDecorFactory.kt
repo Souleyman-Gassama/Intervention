@@ -4,7 +4,8 @@ import android.util.Log
 import com.athand.intervention.authentication.AuthComponent
 import com.athand.intervention.authentication.AuthDecorator
 import com.athand.intervention.authentication.component.AuthWithFirebaseComponent
-import com.athand.intervention.authentication.decor.FirebaseAuthWithEmailAndPasswordDecor
+import com.athand.intervention.authentication.decor.AuthWithEmailAndPasswordDecor
+import com.athand.intervention.authentication.decor.strategy_auth_email_and_password.FirebaseAuthWithEmailAndPassword
 import com.athand.intervention.tools.AUTH_DECOR_EMAIL_AND_PASSWORD
 
 /**
@@ -13,19 +14,21 @@ import com.athand.intervention.tools.AUTH_DECOR_EMAIL_AND_PASSWORD
 class AuthDecorFactory {
     companion object {
         var authDecorFactory: AuthDecorator? = null
-    }
 
-    fun create(authComponent: AuthComponent?, action: String): AuthDecorator {
-        when (action) {
-            AUTH_DECOR_EMAIL_AND_PASSWORD -> {
-                Log.d("eeeee", "${authDecorFactory}")
-                if (authDecorFactory is FirebaseAuthWithEmailAndPasswordDecor) {
+        fun create(authComponent: AuthComponent?, action: String): AuthDecorator {
+            when (action) {
+                AUTH_DECOR_EMAIL_AND_PASSWORD -> {
+                    if (!(authDecorFactory is AuthWithEmailAndPasswordDecor)) {
+                        val startegy =
+                            FirebaseAuthWithEmailAndPassword(authComponent!! as AuthWithFirebaseComponent)
+                        authDecorFactory =
+                            AuthWithEmailAndPasswordDecor(authComponent as AuthWithFirebaseComponent, startegy)
+                    }
                     return authDecorFactory!!
                 }
-                return FirebaseAuthWithEmailAndPasswordDecor(authComponent!! as AuthWithFirebaseComponent)
-            }
-            else -> {
-                throw IllegalArgumentException("Unknown AuthWithFirebaseComponent class")
+                else -> {
+                    throw IllegalArgumentException("Unknown AuthWithFirebaseComponent class")
+                }
             }
         }
     }

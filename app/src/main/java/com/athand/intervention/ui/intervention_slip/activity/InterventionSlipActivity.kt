@@ -1,4 +1,4 @@
-package com.athand.intervention.ui.intervention_report.activity
+package com.athand.intervention.ui.intervention_slip.activity
 
 import android.content.Intent
 import android.content.res.ColorStateList
@@ -13,7 +13,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import com.athand.intervention.R
 import com.athand.intervention.authentication.AuthComponent
-import com.athand.intervention.authentication.component.AuthWithFirebaseComponent
 import com.athand.intervention.authentication.factory.AuthFactory
 import com.athand.intervention.tools.FIREBASE_AUTH_COMPONENT
 import com.athand.intervention.tools.KEY_BUNDLE_DESTINATION
@@ -28,7 +27,6 @@ import com.google.android.material.textview.MaterialTextView
  */
 class InterventionSlipActivity: AppCompatActivity(), OnClickListener {
 
-//    private lateinit var firebaseAuthComponent: AuthComponent
     private lateinit var firebaseAuthComponent: AuthComponent
     private var isLogin: Boolean = false
 
@@ -71,7 +69,8 @@ class InterventionSlipActivity: AppCompatActivity(), OnClickListener {
 
     override fun onStart() {
         super.onStart()
-        firebaseAuthComponent = AuthFactory().create(FIREBASE_AUTH_COMPONENT, NO_AUTH_DECOR)
+        firebaseAuthComponent = AuthFactory.create(FIREBASE_AUTH_COMPONENT, NO_AUTH_DECOR)
+//        firebaseAuthComponent = AuthFactory().create(FIREBASE_AUTH_COMPONENT, NO_AUTH_DECOR)
         isLogin = firebaseAuthComponent.is_Login()
         set_Login_Data_To_Views()
     }

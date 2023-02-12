@@ -4,6 +4,7 @@ package com.athand.intervention.tools
  */
 import android.app.Activity
 import android.content.Context
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import java.text.SimpleDateFormat
 import java.util.*
@@ -25,5 +26,13 @@ fun close_Keyboard(activity: Activity) {
         val inputMethodManager =
             activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+}
+
+fun set_Visibility_View(view: View?, enable: Boolean) {
+    if (enable) {
+        view?.visibility = View.VISIBLE
+    }else{
+        view?.visibility = View.GONE
     }
 }

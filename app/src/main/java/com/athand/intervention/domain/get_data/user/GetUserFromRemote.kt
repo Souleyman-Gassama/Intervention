@@ -26,9 +26,10 @@ internal class GetUserFromRemote(
         if (uid != "") {
             baseRemoteRepository.get_User(uid)
                 .addOnSuccessListener {
-                    val currentUser = it.toObject(MyUser::class.java)!!
-                    result_Get_User(ResultOfGetData(true, currentUser, null))
-
+                    if (it.exists()) {
+                        val currentUser = it.toObject(MyUser::class.java)!!
+                        result_Get_User(ResultOfGetData(true, currentUser, null))
+                    }
                 }
                 .addOnFailureListener {
                     result_Get_User(ResultOfGetData(false, null, it.message))

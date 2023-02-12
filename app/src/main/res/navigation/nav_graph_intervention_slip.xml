@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/fragmentInterventionSlipList"
-        android:name="com.athand.intervention.ui.intervention_report.fragments.FragmentInterventionReportList"
+        android:name="com.athand.intervention.ui.intervention_slip.fragments.FragmentInterventionReportList"
         android:label="FragmentInterventionSlipList"
         tools:layout="@layout/fragment_intervention_report_list"/>
 </navigation>

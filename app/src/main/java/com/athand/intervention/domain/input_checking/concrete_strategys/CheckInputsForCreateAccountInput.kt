@@ -63,8 +63,7 @@ class CheckInputsForCreateAccountInput(
         return mutableMapOf(
             Pair(KEY_FIRST_NAME, firstNameError),
             Pair(KEY_LAST_NAME, lastNameError)
-        )
-            .apply { putAll(checkLoginEntries.get_Error_Map()) }
+        ).apply { putAll(checkLoginEntries.get_Error_Map()) }
     }
 
 }

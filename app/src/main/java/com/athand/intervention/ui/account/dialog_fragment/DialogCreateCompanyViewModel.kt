@@ -9,9 +9,11 @@ import com.athand.intervention.domain.input_checking.DataRequireStrategy.Company
 //import com.athand.intervention.domain.data_require.CompanyDataRequire
 import com.athand.intervention.data.entity.MyCompany
 import com.athand.intervention.data.entity.MyUser
+import com.athand.intervention.domain.input_checking.CheckInputsStrategyFactory
 import com.athand.intervention.domain.input_checking.CheckValidityOfInputsContext
 import com.athand.intervention.domain.input_checking.concrete_strategys.ResultsOfInputCheck
 import com.athand.intervention.tools.FOR_DIALOG_CREATE_COMPANY
+import com.athand.intervention.tools.FOR_LOGIN
 
 class DialogCreateCompanyViewModel(
     val baseRemoteRepository: BaseRemoteRepository,
@@ -42,7 +44,6 @@ class DialogCreateCompanyViewModel(
 
     override fun onCleared() {
         super.onCleared()
-        Log.d("eeeee", "clear")
     }
 
     /**
@@ -143,8 +144,10 @@ class DialogCreateCompanyViewModel(
 
     //CLICK CREATE COMPANY  ______________________________________________
     fun click_Create_Company() {
-        CheckValidityOfInputsContext(this)
-            .check_If_Data_Is_Valid(FOR_DIALOG_CREATE_COMPANY, result)
+        val strategy =
+            CheckInputsStrategyFactory(this, FOR_LOGIN, result).create()
+        CheckValidityOfInputsContext(strategy)
+            .check_If_Data_Is_Valid()
     }
 
     val result = object : ResultsOfInputCheck {

@@ -1,36 +1,41 @@
-package com.athand.intervention.domain.auth
+package com.athand.intervention.domain.auth_use_case
 
 import androidx.lifecycle.Observer
-import com.athand.intervention.authentication.component.AuthWithFirebaseComponent
-import com.athand.intervention.authentication.decor.FirebaseAuthWithEmailAndPasswordDecor
+import com.athand.intervention.authentication.decor.AuthWithEmailAndPasswordDecor
 import com.athand.intervention.authentication.factory.AuthFactory
+import com.athand.intervention.domain.input_checking.CheckInputsStrategyFactory
 import com.athand.intervention.domain.input_checking.CheckValidityOfInputsContext
 import com.athand.intervention.domain.input_checking.DataRequireStrategy
 import com.athand.intervention.domain.input_checking.DataRequireStrategy.LoginDataRequire
 import com.athand.intervention.domain.input_checking.concrete_strategys.ResultsOfInputCheck
-import com.athand.intervention.tools.AUTH_DECOR_EMAIL_AND_PASSWORD
-import com.athand.intervention.tools.ERROR_INPUT
-import com.athand.intervention.tools.FIREBASE_AUTH_COMPONENT
-import com.athand.intervention.tools.FOR_LOGIN
+import com.athand.intervention.tools.*
 
+/**
+ * Auteur Gassama Souleyman
+ */
 class LoginByEmailAndPasswordWithFirebase(
     var data: DataRequireStrategy,
     var resultLogin: (AuthOrCreationResult) -> Unit) {
-
-    var authApi: FirebaseAuthWithEmailAndPasswordDecor
+    var authApi: AuthWithEmailAndPasswordDecor
 
     init {
-        authApi = AuthFactory().create(FIREBASE_AUTH_COMPONENT, AUTH_DECOR_EMAIL_AND_PASSWORD)
-                as FirebaseAuthWithEmailAndPasswordDecor
+        authApi = AuthFactory.create(FIREBASE_AUTH_COMPONENT, AUTH_DECOR_EMAIL_AND_PASSWORD)
+//        authApi = AuthFactory().create(FIREBASE_AUTH_COMPONENT, AUTH_DECOR_EMAIL_AND_PASSWORD)
+                as AuthWithEmailAndPasswordDecor
         execute()
     }
 
     fun execute() {
         val resultInputLogIn = get_Configuration_Of_Input_Verification_Result()
-        CheckValidityOfInputsContext(data)
-            .check_If_Data_Is_Valid(FOR_LOGIN, resultInputLogIn)
+        val strategy =
+            CheckInputsStrategyFactory(data, FOR_LOGIN, resultInputLogIn).create()
+        CheckValidityOfInputsContext(strategy)
+                .check_If_Data_Is_Valid()
     }
 
+    /**
+     * OBSERVER INPUT RESULT ___________________________________________
+     */
     private fun get_Configuration_Of_Input_Verification_Result(): ResultsOfInputCheck {
         return object : ResultsOfInputCheck {
             override fun success() {
@@ -47,10 +52,17 @@ class LoginByEmailAndPasswordWithFirebase(
         }
     }
 
+
+    /**
+     * OBSERVER LOGIN USER RESULT ___________________________________________
+     */
     private fun get_Authentication_Result_Configuration(): Observer<String> {
         return Observer<String> { reponse ->
-            val message = reponse
-            val result = AuthOrCreationResult(true, message, mutableMapOf())
+            var isSuccess = false
+            if( reponse.equals(SUCCESS_LOGIN) ) {
+                isSuccess = true
+            }
+            val result = AuthOrCreationResult(isSuccess, reponse, mutableMapOf())
             resultLogin(result)
         }
     }

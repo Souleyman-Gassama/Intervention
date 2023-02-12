@@ -18,7 +18,7 @@ import com.athand.intervention.R
 import com.athand.intervention.di.FactoryAccountViewModel
 import com.athand.intervention.domain.PressBack
 import com.athand.intervention.tools.*
-import com.athand.intervention.ui.intervention_report.activity.InterventionSlipActivity
+import com.athand.intervention.ui.intervention_slip.activity.InterventionSlipActivity
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputLayout
 
@@ -42,6 +42,8 @@ class FragmentLogin : Fragment(), View.OnClickListener, PressBack {
     private var password: TextInputLayout? = null
     private var buttonResetPassword: RelativeLayout? = null
 
+    private var layoutWaiting: FrameLayout? = null
+
     private var layoutButton: FrameLayout? = null
     private var buttonLogin: MaterialButton? = null
     private var buttonCreate: MaterialButton? = null
@@ -61,6 +63,7 @@ class FragmentLogin : Fragment(), View.OnClickListener, PressBack {
         super.onViewCreated(view, savedInstanceState)
         configuration_Listener()
         configuration_Listener_Views_Visibility()
+        configuration_Listener_Can_Click_Button()
         display_Message()
         navigation_In_App()
         configuration_Listener_Error()
@@ -81,6 +84,8 @@ class FragmentLogin : Fragment(), View.OnClickListener, PressBack {
         email = view.findViewById(R.id.email_layout_login)
         password = view.findViewById(R.id.password_layout_login)
         buttonResetPassword = view.findViewById(R.id.button_reset_password)
+
+        layoutWaiting = view.findViewById(R.id.layout_waiting)
 
         layoutButton = view.findViewById(R.id.layout_button_account_fragment_login)
         buttonLogin = view.findViewById(R.id.button_login)
@@ -157,6 +162,25 @@ class FragmentLogin : Fragment(), View.OnClickListener, PressBack {
 
 
     /**
+     * CONFIGURATION ENABLE BUTTON ______________________________________________
+     */
+    private fun configuration_Listener_Can_Click_Button() {
+        loginViewModel.can_Click_Button_Login().observe(viewLifecycleOwner) { clickable ->
+            set_Can_Click_Button(buttonLogin!!, clickable!!)
+        }
+
+        loginViewModel.can_Click_Button_Create().observe(viewLifecycleOwner) { clickable ->
+            set_Can_Click_Button(buttonCreate!!, clickable!!)
+        }
+    }
+
+    private fun set_Can_Click_Button(button: MaterialButton, clickable: Boolean){
+        set_Visibility_View(button, clickable)
+        set_Visibility_View(layoutWaiting, !clickable)
+        close_Keyboard(requireActivity())
+    }
+
+    /**
      * UPDATE DISPLAY ______________________________________________
      */
     private fun configuration_Listener_Views_Visibility() {
@@ -176,13 +200,15 @@ class FragmentLogin : Fragment(), View.OnClickListener, PressBack {
     }
 
     private fun reset_Visibility_All_View() {
-        buttonNavUp?.visibility = GONE
+        set_Visibility_View(buttonNavUp, false)
 
-        layoutInputPersonalInfo?.visibility = GONE
-        layoutInputLogin?.visibility = GONE
+        set_Visibility_View(layoutInputPersonalInfo, false)
+        set_Visibility_View(layoutInputLogin, false)
 
-        buttonLogin?.visibility = VISIBLE
-        buttonCreate?.visibility = VISIBLE
+        set_Visibility_View(layoutWaiting, false)
+
+        set_Visibility_View(buttonLogin, true)
+        set_Visibility_View(buttonCreate, true)
 
         buttonCreate?.setBackgroundColor(requireActivity().getColor(R.color.white))
         buttonCreate?.setTextColor(requireActivity().getColor(R.color.blue))
@@ -192,22 +218,22 @@ class FragmentLogin : Fragment(), View.OnClickListener, PressBack {
     }
 
     private fun make_Visible_Views_For_Connection() {
-        buttonNavUp?.visibility = VISIBLE
+        set_Visibility_View(buttonNavUp, true)
 
-        layoutInputPersonalInfo?.visibility = GONE
-        layoutInputLogin?.visibility = VISIBLE
+        set_Visibility_View(layoutInputPersonalInfo, false)
+        set_Visibility_View(layoutInputLogin, true)
 
-        buttonCreate?.visibility = GONE
+        set_Visibility_View(buttonCreate, false)
     }
 
     private fun make_Visible_Views_For_Create_Account() {
-        buttonNavUp?.visibility = VISIBLE
+        set_Visibility_View(buttonNavUp, true)
 
-        layoutInputPersonalInfo?.visibility = VISIBLE
-        layoutInputLogin?.visibility = VISIBLE
-        buttonResetPassword?.visibility = GONE
+        set_Visibility_View(layoutInputPersonalInfo, true)
+        set_Visibility_View(layoutInputLogin, true)
+        set_Visibility_View(buttonResetPassword, false)
 
-        buttonLogin?.visibility = GONE
+        set_Visibility_View(buttonLogin, false)
         buttonCreate?.setBackgroundColor(requireActivity().getColor(R.color.blue))
         buttonCreate?.setTextColor(requireActivity().getColor(R.color.white))
     }

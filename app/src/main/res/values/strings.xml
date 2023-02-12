@@ -44,5 +44,7 @@
     <string name="Company_">Company :</string>
     <string name="Login_Info">Login Info</string>
     <string name="Change_login_details">Change login details</string>
+    <string name="Success_update_login_data">Success update login data</string>
+    <string name="Failure_login">Password is invalid or user does not have a password</string>
 
 </resources>

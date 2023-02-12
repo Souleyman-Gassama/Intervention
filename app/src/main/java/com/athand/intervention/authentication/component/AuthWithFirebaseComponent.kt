@@ -7,7 +7,7 @@ import com.athand.intervention.tools.SUCCESS_SIGN_OUT
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 /**
- * Cree le 31/01/2022 par Gassama Souleyman
+ * Cree le 31/12/2022 par Gassama Souleyman
  */
 open class AuthWithFirebaseComponent() : AuthComponent() {
 

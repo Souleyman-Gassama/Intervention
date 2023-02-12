@@ -67,8 +67,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:padding="8dp">
-
                             <include layout="@layout/layout_button_account" />
+                            <include layout="@layout/fragment_waiting"/>
                         </FrameLayout>
                     </LinearLayout>
                     </ScrollView>

@@ -4,7 +4,7 @@ import androidx.lifecycle.Observer
 
 
 /**
- * Cree le 31/01/2022 par Gassama Souleyman
+ * Cree le 31/12/2022 par Gassama Souleyman
  */
 abstract class AuthComponent {
 

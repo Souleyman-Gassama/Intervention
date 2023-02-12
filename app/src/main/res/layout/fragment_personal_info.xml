@@ -110,13 +110,13 @@
                         </FrameLayout>
 
                         <com.google.android.material.button.MaterialButton
-                            android:id="@+id/button_change_password_fragment_personal_info"
+                            android:id="@+id/button_change_auth_data_fragment_personal_info"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="16dp"
                             android:text="@string/Change_login_details"
                             android:textAllCaps="false"
-                            app:backgroundTint="@color/blueDark"
+                            app:background="@drawable/backgound_color_button_change_login_data"
                             app:cornerRadius="15dp" />
 
                     </LinearLayout>

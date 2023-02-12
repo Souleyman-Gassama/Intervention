@@ -17,7 +17,7 @@
         >
 
         <activity
-            android:name=".ui.intervention_report.activity.InterventionSlipActivity"
+            android:name=".ui.intervention_slip.activity.InterventionSlipActivity"
             android:exported="true"
             android:windowSoftInputMode="stateHidden"
             >

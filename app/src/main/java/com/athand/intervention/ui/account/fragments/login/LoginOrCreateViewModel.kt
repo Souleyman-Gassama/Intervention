@@ -1,21 +1,18 @@
 package com.athand.intervention.ui.account.fragments.login
 
-import android.os.Message
+import androidx.core.view.accessibility.AccessibilityClickableSpanCompat
 import androidx.lifecycle.*
 import com.athand.intervention.R
 import com.athand.intervention.authentication.AuthComponent
-import com.athand.intervention.authentication.component.AuthWithFirebaseComponent
-import com.athand.intervention.authentication.decor.FirebaseAuthWithEmailAndPasswordDecor
 import com.athand.intervention.authentication.factory.AuthFactory
-import com.athand.intervention.domain.auth.LoginByEmailAndPasswordWithFirebase
+import com.athand.intervention.domain.auth_use_case.LoginByEmailAndPasswordWithFirebase
 import com.athand.intervention.data.repository.BaseRemoteRepository
 import com.athand.intervention.tools.*
 import com.athand.intervention.data.entity.MyUser
 import com.athand.intervention.data.repository.BaseLocalRepository
-import com.athand.intervention.domain.auth.CreateByEmailAndPasswordWithFirebase
-import com.athand.intervention.domain.auth.AuthOrCreationResult
+import com.athand.intervention.domain.auth_use_case.CreateByEmailAndPasswordWithFirebase
+import com.athand.intervention.domain.auth_use_case.AuthOrCreationResult
 import com.athand.intervention.domain.get_data.user.GetUserFromDatabase
-import com.athand.intervention.domain.input_checking.CheckValidityOfInputsContext
 import com.athand.intervention.domain.input_checking.DataRequireStrategy.LoginDataRequire
 import com.athand.intervention.domain.input_checking.DataRequireStrategy.ProfileDataRequire
 
@@ -32,6 +29,8 @@ class LoginOrCreateViewModel(
 
     private var viewCurrentlyDisplayed: MutableLiveData<String>
 
+    private var canClickButtonLogin: MutableLiveData<Boolean>
+    private var canClickButtonCreate: MutableLiveData<Boolean>
     private var messageForViews: MutableLiveData<Any>
     private var navigation: MutableLiveData<Int>
 
@@ -39,13 +38,13 @@ class LoginOrCreateViewModel(
     private var lastNameInput: MutableLiveData<String?>
     private var emailInput: MutableLiveData<String?>
     private var passwordInput: MutableLiveData<String?>
-
-    private var checkValidityEntries: CheckValidityOfInputsContext
     private var allErrorMap: MutableLiveData<Map<String, Boolean>>
 
     init {
         viewCurrentlyDisplayed = MutableLiveData(INIT)
 
+        canClickButtonLogin = MutableLiveData(true)
+        canClickButtonCreate = MutableLiveData(true)
         messageForViews = MutableLiveData()
         navigation = MutableLiveData()
 
@@ -54,13 +53,9 @@ class LoginOrCreateViewModel(
         emailInput = MutableLiveData("")
         passwordInput = MutableLiveData("")
 
-        checkValidityEntries = CheckValidityOfInputsContext(this)
         allErrorMap = MutableLiveData(mutableMapOf())
     }
 
-    override fun onCleared() {
-        super.onCleared()
-    }
 
     /**
      * GET DATA FOR CHECK ______________________________________________
@@ -123,10 +118,11 @@ class LoginOrCreateViewModel(
     fun click_Button_Login() {
         if (viewCurrentlyDisplayed.value == INIT) {
             viewCurrentlyDisplayed.value = FOR_LOGIN
-//            (authComponent as AuthWithFirebaseComponent).auth_With(AUTH_EMAIL_AND_PASSWORD)
-            authComponent = AuthFactory().create(FIREBASE_AUTH_COMPONENT, AUTH_DECOR_EMAIL_AND_PASSWORD)
+            authComponent = AuthFactory.create(FIREBASE_AUTH_COMPONENT, AUTH_DECOR_EMAIL_AND_PASSWORD)
+//            authComponent = AuthFactory().create(FIREBASE_AUTH_COMPONENT, AUTH_DECOR_EMAIL_AND_PASSWORD)
 
         } else {
+            set_If_Can_Click_Button(false)
             LoginByEmailAndPasswordWithFirebase(this){
                 reponse_Login_Or_Create(it)
             }
@@ -139,9 +135,10 @@ class LoginOrCreateViewModel(
     fun click_Button_Create() {
         if (viewCurrentlyDisplayed.value == INIT) {
             viewCurrentlyDisplayed.value = FOR_CREATE
-            authComponent = AuthFactory().create(FIREBASE_AUTH_COMPONENT, AUTH_DECOR_EMAIL_AND_PASSWORD)
-//            (authComponent as AuthWithFirebaseComponent).auth_With(AUTH_EMAIL_AND_PASSWORD)
+            authComponent = AuthFactory.create(FIREBASE_AUTH_COMPONENT, AUTH_DECOR_EMAIL_AND_PASSWORD)
+//            authComponent = AuthFactory().create(FIREBASE_AUTH_COMPONENT, AUTH_DECOR_EMAIL_AND_PASSWORD)
         } else {
+            set_If_Can_Click_Button(false)
             CreateByEmailAndPasswordWithFirebase(this){
                 reponse_Login_Or_Create(it)
             }
@@ -181,16 +178,16 @@ class LoginOrCreateViewModel(
             ERROR_INPUT -> {
                 set_Errors(result.inputErrorMap)
             }
-
-            FAILURE_LOGIN -> {
-                messageForViews.value = R.string.Failure_Login
-                set_User_Object_To_FireBase()
+            FAILURE_LOGIN ->{
+                messageForViews.value = R.string.Failure_login
             }
             else -> {
                 messageForViews.value = result.message!!
             }
         }
+        set_If_Can_Click_Button(true)
     }
+
 
     /**
      * GET DATA FROM DATABASE ______________________________________________
@@ -237,6 +234,27 @@ class LoginOrCreateViewModel(
         )
     }
 
+
+    /**
+     * SET IF CAN CLICK BUTTON ______________________________________________
+     */
+    fun set_If_Can_Click_Button(clickable: Boolean){
+        when(viewCurrentlyDisplayed.value) {
+            FOR_LOGIN -> {
+                canClickButtonLogin.value = clickable
+            }
+            FOR_CREATE -> {
+                canClickButtonCreate . value = clickable
+            }
+        }
+    }
+
+    fun can_Click_Button_Login(): MutableLiveData<Boolean>{
+        return canClickButtonLogin
+    }
+    fun can_Click_Button_Create(): MutableLiveData<Boolean>{
+        return canClickButtonCreate
+    }
 
     /**
      * SET VIEWS VISIBILITY ______________________________________________

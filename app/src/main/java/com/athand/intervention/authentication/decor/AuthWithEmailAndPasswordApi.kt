@@ -1,4 +1,4 @@
-package com.athand.intervention.authentication.decor.api
+package com.athand.intervention.authentication.decor
 
 import androidx.lifecycle.Observer
 import com.athand.intervention.domain.input_checking.DataRequireStrategy.LoginDataRequire
@@ -14,6 +14,5 @@ interface AuthWithEmailAndPasswordApi {
     fun sign_In_With_Email_And_Password
                 (viewModel: LoginDataRequire, observeAuthReponse: Observer<String>)
 
-    fun change_Email(email: String)
-    fun change_Password(dataForReset: String)
+    fun change_Auth_Data(authData: LoginDataRequire, observeAuthReponse: Observer<String>)
 }
